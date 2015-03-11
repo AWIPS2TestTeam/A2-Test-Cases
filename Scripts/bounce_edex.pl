@@ -8,6 +8,7 @@
 # William E. Smith, Fairfield Technologies, Inc.
 # Revised: March 28, 2014 - Start and stop DX3 before bouncing DX4.
 # Revised: September 23, 2014 - Now searches the request log for the trigger string.
+# Revised: March 10,2015 - Corrected a logic flaw. Now the seek command is used to send the file pointer to the end of the log file.
 #
 # Set up variables
 use strict;

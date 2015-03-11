@@ -53,31 +53,33 @@ if($rc){die "Stopping of EDEX on DX3 failed";}
 # Restart EDEX on DX3 and wait for trigger before restarting on DX4
 #
 print "Restarting EDEX on DX3.\n";
-open(LOGFILE,$logDat) or die "Failed to open logfile $logDat: $!";
-while(<LOGFILE>){
-   print $_,"\n";
-}
+#while(<LOGFILE>){
+#   print $_,"\n";
+#}
  
-sleep $sleeptime;
-LOGFILE->clearerr();
-
+#LOGFILE->clearerr();
 print "EDEX on DX3 is restarting. Waiting for ESB trigger to restart EDEX on DX4.\n";
 $rc=system('service edex_camel start');
 print "Return code from dx3 edex start: ",$rc,"\n";
 if($rc){die "Restart of EDEX on DX3 failed";}
 
+print "Moving pointer to end of log file.\n";
+open(LOGFILE,$logDat) or die "Failed to open logfile $logDat: $!";
+seek(LOGFILE, 0, 2);
+sleep $sleeptime;
+print "Looking for trigger.\n";
 for(;;){
     while(<LOGFILE>){
-    print $_;
-       if($_ =~ /$trigger/){
-           print " on DX3\n";
-           $flag=1;
-           last;
-       }
+        print $_;
+        if($_ =~ /$trigger/){
+            print "Found trigger on DX3\n";
+            $flag=1;
+            last;
+        }
     }
-    if($flag){last;}
+    seek(LOGFILE, 0, 2);
     sleep $sleeptime;
-    LOGFILE->clearerr();
+    if($flag){last;}
 }
 #Stop EDEX on DX4
 print "Stopping EDEX on DX4.\n";
